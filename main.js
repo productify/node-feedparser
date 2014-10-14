@@ -282,6 +282,7 @@ FeedParser.prototype.handleCloseTag = function (el){
     }
   }
 
+  var pushed = false;
   if (node['#name'] === 'item' ||
       node['#name'] === 'entry' ||
       (node['#local'] === 'item' && (node['#prefix'] === '' || node['#type'] === 'rdf')) ||
@@ -303,6 +304,7 @@ FeedParser.prototype.handleCloseTag = function (el){
     }
     if (this.meta.author && !item.author) item.author = this.meta.author;
     this.push(item);
+    pushed = true;
   } else if (!this.meta.title && // We haven't yet parsed all the metadata
               (node['#name'] === 'channel' ||
                node['#name'] === 'feed' ||
@@ -323,6 +325,7 @@ FeedParser.prototype.handleCloseTag = function (el){
     } else {
       stdEl = node['#local'] || node['#name'];
     }
+    if(pushed) return;
     if (!this.stack[0].hasOwnProperty(stdEl)) {
       this.stack[0][stdEl] = n;
     } else if (this.stack[0][stdEl] instanceof Array) {
